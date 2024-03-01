@@ -70,6 +70,17 @@ label:
         add rax, rbx
 ```
 
+* __Operands indentation.__
+```asm
+label:
+add rax, rbx
+```
+Becomes:
+```asm
+label:
+        add     rax, rbx
+```
+
 * __Comments indentation.__
 ```asm
    ; Start of the cycle
@@ -125,33 +136,6 @@ Becomes:
         add rax, rbx
 ```
 
-* __No extra spaces and empty lines.__
-```asm
-add_func:
-        mov    rax, rdi
-        add    rax, rsi
-        ret
-
-
-
-sub_func:
-        mov    rax, rdi
-        sub    rax, rsi
-        ret
-```
-Becomes:
-```asm
-add_func:
-        mov rax, rdi
-        add rax, rsi
-        ret
-
-sub_func:
-        mov rax, rdi
-        sub rax, rsi
-        ret
-```
-
 ## Issues
 
 There might be some issues since I have not tested it on all nasm functionality. 
@@ -168,19 +152,21 @@ Parameters:
         Indentation for comments in spaces (default 40)
   -ii int
         Indentation for instructions in spaces (default 8)
+  -oi int
+        Indentation for operands in spaces (default 8)
 ```
 
 Examples:
 * `nasmfmt main.asm funcs1.asm funcs2.asm`
-* `nasmfmt -ii 4 main.asm`
+* `nasmfmt -ii 4 -oi 12 main.asm`
 * `nasmfmt -ii 4 -ci 36 main.asm`
 
 ## Installing
 
-Visit [Releases](https://github.com/yamnikov-oleg/nasmfmt/releases) to download a binary for your platform.
+Visit Releases to download a binary for your platform.
 
 ## Building
 
 Building requires latest version of golang from [golang.org](https://golang.org/).
 
-If you installed one, run `go install github.com/yamnikov-oleg/nasmfmt@latest`. Built binary will be located in your $GOPATH/bin.
+If you installed one, run `go build -o nasmfmt.exe main.go`.
