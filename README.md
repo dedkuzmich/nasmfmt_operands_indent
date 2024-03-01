@@ -157,9 +157,10 @@ Parameters:
 ```
 
 Examples:
-* `nasmfmt main.asm funcs1.asm funcs2.asm`
-* `nasmfmt -ii 4 -oi 12 main.asm`
-* `nasmfmt -ii 4 -ci 36 main.asm`
+* `nasmfmt test.asm funcs1.asm funcs2.asm`
+* `nasmfmt -oi 12 test.asm`
+* `nasmfmt -ii 4 -oi 12 test.asm`
+* `nasmfmt -ii 4 -ci 36 test.asm`
 
 ## Installing
 
