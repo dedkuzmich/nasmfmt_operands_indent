@@ -12,8 +12,10 @@ import (
 	"unicode/utf8"
 )
 
+// GLOBALS
 var (
 	insIndent     int
+	opIndent      int
 	commentIndent int
 )
 
@@ -23,7 +25,8 @@ func init() {
 		flag.PrintDefaults()
 	}
 	flag.IntVar(&insIndent, "ii", 8, "Indentation for instructions in spaces")
-	flag.IntVar(&commentIndent, "ci", 40, "Indentation for comments in spaces")
+	flag.IntVar(&opIndent, "oi", 8, "Indentation for operands in spaces")
+	flag.IntVar(&commentIndent, "ci", 48, "Indentation for comments in spaces")
 }
 
 type asmLine struct {
@@ -193,6 +196,32 @@ func (l *asmLine) print(w io.Writer) {
 
 	if l.text != "" {
 		w.Write(bytes.Repeat(space, insIndent))
+
+		arr := strings.Split(l.text, " ")
+		txt := ""
+		instr_len := 0
+		for index, word := range arr {
+			if index == 0 {
+				spacesNeeded := opIndent - len(word)
+				if spacesNeeded <= 0 {
+					spacesNeeded = 1
+				}
+				spaces := strings.Repeat(" ", spacesNeeded)
+				txt = txt + word + spaces // Use "\t" to use tab insted of spaces
+				instr_len = len(word)
+			} else {
+				txt = txt + word + " "
+			}
+		}
+
+		r := []rune(txt)
+		txt = string(r[:len(r)-1])
+		l.text = txt
+
+		if strings.Contains(l.text, "\t") == true {
+			column += 8 - instr_len
+		}
+
 		w.Write([]byte(l.text))
 		column += insIndent
 		column += utf8.RuneCountInString(l.text)
@@ -203,7 +232,7 @@ func (l *asmLine) print(w io.Writer) {
 			if column < commentIndent-1 {
 				w.Write(bytes.Repeat(space, commentIndent-column-1))
 			} else {
-				w.Write(space)
+				w.Write(bytes.Repeat(space, 8))
 			}
 		}
 		w.Write([]byte{';', ' '})
@@ -237,15 +266,25 @@ func formatto(filename, outname string) error {
 	}
 
 	scanner := bufio.NewScanner(file)
-	lastEmpty := false
+	lastEmpty := 0
 	for scanner.Scan() {
 		line := scanner.Text()
 		asmLine := parseLine(line)
-		if lastEmpty && asmLine.empty() {
-			continue // Output no more than one empty line
+		// if lastEmpty && asmLine.empty() {
+		// 	continue
+		// }
+
+		// Output no more than 5 empty lines
+		if asmLine.empty() == true {
+			lastEmpty += 1
+			if lastEmpty > 5 {
+				continue
+			}
+		} else {
+			lastEmpty = 0
 		}
+
 		asmLine.print(out)
-		lastEmpty = asmLine.empty()
 	}
 	return nil
 }
