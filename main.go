@@ -228,14 +228,30 @@ func (l *asmLine) print(w io.Writer) {
 	}
 
 	if l.comment != "" {
-		if column != 0 {
-			if column < commentIndent-1 {
-				w.Write(bytes.Repeat(space, commentIndent-column-1))
+		spaces := ""
+		// If first char is ";", then print it without any indent
+		if len(l.comment) >= 2 && l.comment[0] == ';' {
+			spaces = ""
+		} else {
+			if column == 0 {
+				// If the line contains only comment (if line doesn't contain instruction), then use insIndent
+				spaces += strings.Repeat(" ", insIndent)
 			} else {
-				w.Write(bytes.Repeat(space, 8))
+				// if line contains instruction, then use commentIndent
+				if column < commentIndent-1 {
+					spaces += strings.Repeat(" ", commentIndent-column-1)
+				} else {
+					spaces += strings.Repeat(" ", 8)
+				}
 			}
 		}
-		w.Write([]byte{';', ' '})
+
+		w.Write([]byte(spaces))
+		if spaces != "" {
+			w.Write([]byte{';', ' '})
+		} else {
+			w.Write([]byte{';'})
+		}
 		w.Write([]byte(l.comment))
 	}
 
