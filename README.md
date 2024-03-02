@@ -82,8 +82,10 @@ label:
 ```
 
 * __Comments indentation.__
+
+To print comment without any indentation, use two ";"
 ```asm
-   ; Start of the cycle
+;; Start of the cycle
 cycle:
         inc rcx ; Make it bigger
         jmp cycle ; Because why not?
@@ -91,12 +93,13 @@ cycle:
 ```
 Becomes:
 ```asm
-; Start of the cycle
+;; Start of the cycle
 cycle:
         inc rcx                        ; Make it bigger
         jmp cycle                      ; Because why not?
-; Here's no cycle
+        ; Here's no cycle
 ```
+
 
 * __Consistent labels style.__
 ```asm
